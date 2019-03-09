@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>EqualsEquals</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://apis.google.com/js/client.js"></script>
+
+  <style>
+    #container {
+        width: 420px;
+        background-color: #ccc;
+        border: 10px solid #ddd;
+        margin:0 auto;
+    }
+    #canvas {
+        width: 650px;
+        height: 400px;
+        padding-left: 250px;
+        padding-top: 100px;
+    }
+    #videoElement {
+        width: 400px;
+        height: 300px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <video autoplay="true" id="videoElement" name='vid'></video>
+  </div>
+  <button onclick= "myFunction(); sendPicture();" align="center" style= "margin: 20px 410px auto"
+          class="btn btn-primary dropdown-toggle" type="button" >Take a picture!</button></a>
+  <canvas id="canvas" width="400" height="300">Your browser does not support Canvas.</canvas>
+
+    <script>
+      var video = document.querySelector("#videoElement");
+
+      if (navigator.mediaDevices.getUserMedia)
+      {
+        navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+          video.srcObject = stream;
+        }).catch(function(error) {
+          console.log(error);
+        });
+
+        function sendPicture(){
+
+        }
+
+        function myFunction() {
+          var x =  document.getElementById("canvas") ;
+          var ctx = x.getContext("2d");
+          ctx.fillStyle = "#FF0000";
+          ctx.drawImage(video, 0, 0, 400, 300);
+        }
+      }
+    </script>
+  </body>
+</html>
