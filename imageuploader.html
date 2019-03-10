@@ -1,0 +1,97 @@
+<head>
+  <title>EqualsEquals</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+  <div id="filesubmit">
+    <input id = "upload-image" type="file" class="file-select" accept="image/*"/>
+    <button class="file-submit">SUBMIT</button>
+    <div id="image-wrapper"></div>
+  </div>
+
+
+  <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyAQ30vD_gsrwbNWScNlyXTYgqD_TPTyYlE",
+      authDomain: "equalsequals2019.firebaseapp.com",
+      databaseURL: "https://equalsequals2019.firebaseio.com",
+      projectId: "equalsequals2019",
+      storageBucket: "equalsequals2019.appspot.com",
+      messagingSenderId: "833041488134"
+    };
+
+    var prefix = 'gs://equalsequals2019.appspot.com/';
+
+    firebase.initializeApp(config);
+    const storageService = firebase.storage();
+    const storageRef = storageService.ref();
+
+    document.querySelector('.file-select').addEventListener('change', handleFileUploadChange);
+    document.querySelector('.file-submit').addEventListener('click', handleFileUploadSubmit);
+
+    let selectedFile;
+    function handleFileUploadChange(e) {
+      selectedFile = e.target.files[0];
+    }
+
+    function handleFileUploadSubmit(e) {
+
+      const uploadTask = storageRef.child(`images/${selectedFile.name}`).put(selectedFile); //create a child directory called images, and place the file inside this directory
+      uploadTask.on('state_changed', (snapshot) => {
+      // Observe state change events such as progress, pause, and resume
+      }, (error) => {
+        // Handle unsuccessful uploads
+        console.log(error);
+      }, () => {
+         // Do something once upload is complete
+         console.log('success');
+         let url = prefix + `images/${selectedFile.name}`;
+         console.log(url);
+      });
+    }
+
+    function visiondetect(context, data) {
+      if (data !== undefined) {
+        var gcs = gcloud.storage(),
+          vision = gcloud.vision();
+        // Create Firebase Storage public URL
+        var urlString = prefix + `images/${selectedFile.name}`;;
+
+        // Create GCS File from the data
+        var file = urlString;
+
+        // Use GCS File in the Cloud Vision API
+        vision.detectLabels(file, {
+          verbose: true
+        }, function(err, labels, apiResponse) {
+          if (err) {
+            context.failure("Vision detection failed")
+          } else {
+            var ref = firebase.database().ref("images");
+            ref.push({
+              "url": urlString,
+              "name": data.name,
+              "labels": labels
+            }, function(error) {
+              if (error) {
+                context.failure("Firebase write failed")
+              } else {
+                context.success(labels, apiResponse);
+              }
+            });
+          }
+        });
+      } else {
+        context.failure('No data payload defined!');
+      }
+}
+
+
+  </script>
+
+</body>
