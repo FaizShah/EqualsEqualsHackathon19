@@ -1,17 +1,18 @@
-def foodScan(path):
+def foodScan(url):
     """Detects web annotations given an image, using the geotag metadata
         in the image to detect web entities."""
     import io
     from google.cloud.vision import types
     from google.cloud import vision
-
+        
     client = vision.ImageAnnotatorClient()
-#    path = 'sausage1.jpg'
+    path = 'apple1.jpg'
+    
     with io.open(path, 'rb') as image_file:
         content = image_file.read()
 
     image = vision.types.Image(content=content)
-
+    
     web_detection_params = vision.types.WebDetectionParams(
         include_geo_results=True)
     image_context = vision.types.ImageContext(
@@ -24,3 +25,8 @@ def foodScan(path):
     print(_description)
 
     return _description
+
+
+
+
+
